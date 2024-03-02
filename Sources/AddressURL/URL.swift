@@ -1,6 +1,5 @@
 import Foundation
 import Network
-import EmailValidator
 
 extension URL {
     // MARK: - Initializers
@@ -23,32 +22,6 @@ extension URL {
         self = URLComponent.host("[\(address)]").url!
     }
     
-    /**
-        Creates a URL with the `mailto://` scheme
-     */
-    public init?(email: String, allowTopLevelDomains: Bool = true, allowInternational: Bool = true) {
-        if email.hasPrefix("mailto://") {
-            let address = String(email.suffix(email.count - "mailto://".count))
-            guard EmailValidator.validate(email: address, allowTopLevelDomains: allowTopLevelDomains, allowInternational: allowInternational) else {
-                return nil
-            }
-            self.init(string: "mailto://\(address)")
-            return
-        } else if email.hasPrefix("mailto:") {
-            let address = String(email.suffix(email.count - "mailto:".count))
-            guard EmailValidator.validate(email: address, allowTopLevelDomains: allowTopLevelDomains, allowInternational: allowInternational) else {
-                return nil
-            }
-            self.init(string: "mailto://\(address)")
-            return
-        }
-        
-        guard EmailValidator.validate(email: email, allowTopLevelDomains: allowTopLevelDomains, allowInternational: allowInternational) else {
-            return nil
-        }
-        self.init(string: "mailto://\(email)")
-    }
-
     // TODO: I want url.component(.host) to return the URLComponent.host
 
     public func with(component: URLComponent, resolvingAgainstBaseURL: Bool = false) -> URL? {
@@ -70,36 +43,6 @@ extension URL {
 			components.port = port
         }
         return components.url
-    }
-
-    // MARK: - Email
-    
-    /**
-        A very rudimentary email validator. Use [EmailValidator](https://github.com/evanrobertson/EmailValidator) for a more robust validator/
-     */
-    public var isEmail: Bool {
-        guard let _ = self.emailAddress else {
-            return false
-        }
-        return true
-    }
-
-    public var emailAddress: String? {
-        var email: String?
-        if self.scheme == "mailto" {
-            email = String(self.absoluteString.suffix(self.absoluteString.count - "mailto://".count))
-            
-        } else if let noScheme = self.with(component: .scheme(nil)) {
-            email = String(noScheme.absoluteString.suffix(noScheme.absoluteString.count - "//".count))
-        }
-        
-        guard let address = email else {
-            return nil
-        }
-        if EmailValidator.validate(email: address, allowTopLevelDomains: true, allowInternational: true) {
-            return address
-        }
-        return nil
     }
 
     // MARK: - Helpers

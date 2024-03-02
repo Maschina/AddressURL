@@ -14,7 +14,6 @@ final class AddressURLTests: XCTestCase {
         XCTAssertNotNil(url)
         XCTAssertNotNil(url.ipv4Address)
         XCTAssertNil(url.ipv6Address)
-        XCTAssertFalse(url.isEmail)
     }
 
     func testValidIPv6() {
@@ -24,7 +23,6 @@ final class AddressURLTests: XCTestCase {
         XCTAssertNotNil(url)
         XCTAssertNil(url.ipv4Address)
         XCTAssertNotNil(url.ipv6Address)
-        XCTAssertFalse(url.isEmail)
 
         var c = URLComponents()
         c.host = "64:ff9b::0.0.0.0"
@@ -49,7 +47,6 @@ final class AddressURLTests: XCTestCase {
             XCTAssertFalse(url.isIPv4)
             XCTAssertTrue(url.isIPv6)
             XCTAssertNotNil(url.ipv6Address)
-            XCTAssertFalse(url.isEmail)
             XCTAssertEqual(url.with(scheme: "https")?.absoluteString, "https://\(v)")
             
             let test = URL(string: "https://\(v)")
@@ -76,12 +73,10 @@ final class AddressURLTests: XCTestCase {
             XCTAssertNotNil(url)
             XCTAssertNil(url.ipv4Address)
             XCTAssertNotNil(url.ipv6Address)
-            XCTAssertFalse(url.isEmail)
             
             XCTAssertNotNil(URLComponent.host(v).url)
             XCTAssertTrue(URLComponent.host(v).url!.isIPv6)
             XCTAssertNotNil(URLComponent.host(v).url!.ipv6Address)
-            XCTAssertFalse(URLComponent.host(v).url!.isEmail)
             XCTAssertFalse(URLComponent.host(v).url!.isIPv4)
         }
     }
@@ -91,24 +86,8 @@ final class AddressURLTests: XCTestCase {
 
         XCTAssertNil(url.ipv4Address)
         XCTAssertNil(url.ipv6Address)
-        XCTAssertFalse(url.isEmail)
     }
     
-    func testEmail() {
-        var url = URL(email: "mailto:hello@gorak.us")
-        XCTAssertNotNil(url?.emailAddress)
-        XCTAssertEqual(url?.emailAddress, "hello@gorak.us")
-        url = URL(email: "hello@gorak.us")
-        XCTAssertNotNil(url?.emailAddress)
-        XCTAssertEqual(url?.emailAddress, "hello@gorak.us")
-        url = URL(email: "mailto://hello@gorak.us")
-        XCTAssertNotNil(url?.emailAddress)
-        XCTAssertEqual(url?.emailAddress, "hello@gorak.us")
-        url = URL(email: "mailto:hello+tag@gorak.us")
-        XCTAssertNotNil(url?.emailAddress)
-        XCTAssertEqual(url?.emailAddress, "hello+tag@gorak.us")
-    }
-	
 	func testValidIPv4WithPort() throws {
 		let validIps = [
 			"127.0.0.1:80"
@@ -166,7 +145,6 @@ final class AddressURLTests: XCTestCase {
     static var allTests = [
         ("test8.8.8.8", testEightDotEightDotEightDotEight),
         ("test2001:4860:4860::8888", testValidIPv6),
-        ("testInvalid", testInvalidIPv6),
-        ("testEmail", testEmail)
+        ("testInvalid", testInvalidIPv6)
     ]
 }
