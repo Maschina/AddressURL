@@ -14,13 +14,21 @@ extension URL {
         self = url
     }
 
-    public init(address: IPv4Address) {
-        self = URLComponent.host("\(address)").url!
+    public init(httpAddress address: IPv4Address) {
+        self = URLComponent.host("\(address)").url!.with(component: .scheme("http"))!
     }
+	
+	public init(httpsAddress address: IPv4Address) {
+		self = URLComponent.host("\(address)").url!.with(component: .scheme("https"))!
+	}
     
-    public init(address: IPv6Address) {
-        self = URLComponent.host("[\(address)]").url!
+    public init(httpAddress address: IPv6Address) {
+        self = URLComponent.host("[\(address)]").url!.with(component: .scheme("http"))!
     }
+	
+	public init(httpsAddress address: IPv6Address) {
+		self = URLComponent.host("[\(address)]").url!.with(component: .scheme("https"))!
+	}
     
     // TODO: I want url.component(.host) to return the URLComponent.host
 
